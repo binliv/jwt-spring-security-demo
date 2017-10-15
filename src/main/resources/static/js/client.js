@@ -73,9 +73,34 @@ $(function () {
         }
     }
 
+    // function showUserInformation() {
+    //     $.ajax({
+    //         url: "/user",
+    //         type: "GET",
+    //         contentType: "application/json; charset=utf-8",
+    //         dataType: "json",
+    //         headers: createAuthorizationTokenHeader(),
+    //         success: function (data, textStatus, jqXHR) {
+    //             var $userInfoBody = $userInfo.find("#userInfoBody");
+    //
+    //             $userInfoBody.append($("<div>").text("Username: " + data.username));
+    //             $userInfoBody.append($("<div>").text("Email: " + data.email));
+    //
+    //             var $authorityList = $("<ul>");
+    //             data.authorities.forEach(function (authorityItem) {
+    //                 $authorityList.append($("<li>").text(authorityItem.authority));
+    //             });
+    //             var $authorities = $("<div>").text("Authorities:");
+    //             $authorities.append($authorityList);
+    //
+    //             $userInfoBody.append($authorities);
+    //             $userInfo.show();
+    //         }
+    //     });
+    // }
     function showUserInformation() {
         $.ajax({
-            url: "/user",
+            url: "/users",
             type: "GET",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -83,17 +108,11 @@ $(function () {
             success: function (data, textStatus, jqXHR) {
                 var $userInfoBody = $userInfo.find("#userInfoBody");
 
-                $userInfoBody.append($("<div>").text("Username: " + data.username));
-                $userInfoBody.append($("<div>").text("Email: " + data.email));
 
-                var $authorityList = $("<ul>");
-                data.authorities.forEach(function (authorityItem) {
-                    $authorityList.append($("<li>").text(authorityItem.authority));
+                data.forEach(function (user) {
+                    $userInfoBody.append($("<div>").text("Username: " + user.name));
+                    $userInfoBody.append($("<div>").text("Email: " + user.email));
                 });
-                var $authorities = $("<div>").text("Authorities:");
-                $authorities.append($authorityList);
-
-                $userInfoBody.append($authorities);
                 $userInfo.show();
             }
         });

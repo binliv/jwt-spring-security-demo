@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 logger.error("an error occured during getting username from token", e);
             } catch (ExpiredJwtException e) {
                 logger.warn("the token is expired and not valid anymore", e);
+            } catch (MalformedJwtException e){
+                logger.warn("MalformedJwtException for input:" + authToken );
             }
+
         } else {
             logger.warn("couldn't find bearer string, will ignore the header");
         }

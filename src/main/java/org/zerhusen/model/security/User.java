@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "USER")
+@Table(name = "USERS")
 public class User {
 
     @Id
@@ -31,7 +31,7 @@ public class User {
 
     @Column(name = "USERNAME", length = 50, unique = true)
     @NotNull
-    @Size(min = 4, max = 50)
+    @Size(min = 1, max = 50)
     private String username;
 
     @Column(name = "PASSWORD", length = 100)
@@ -41,17 +41,17 @@ public class User {
 
     @Column(name = "FIRSTNAME", length = 50)
     @NotNull
-    @Size(min = 4, max = 50)
+    //@Size(min = 4, max = 50)
     private String firstname;
 
     @Column(name = "LASTNAME", length = 50)
     @NotNull
-    @Size(min = 4, max = 50)
+    //@Size(min = 4, max = 50)
     private String lastname;
 
     @Column(name = "EMAIL", length = 50)
-    @NotNull
-    @Size(min = 4, max = 50)
+//    @NotNull
+//    @Size(min = 4, max = 50)
     private String email;
 
     @Column(name = "ENABLED")

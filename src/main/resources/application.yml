@@ -7,7 +7,15 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true
-
+  datasource:
+    url: jdbc:postgresql://localhost:5432/yuyan_db
+    username: yuyan_user
+    password: 123456
+    platform: POSTGRESQL
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
 jwt:
   header: Authorization
   secret: mySecret
@@ -16,8 +24,7 @@ jwt:
     authentication:
       path: auth
       refresh: refresh
-
-#logging:
-#  level:
-#    org.springframework:
-#      security: DEBUG
+logging:
+  level:
+    org.springframework:
+      security: DEBUG
