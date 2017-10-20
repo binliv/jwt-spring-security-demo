@@ -13,5 +13,5 @@ INSERT INTO USER_AUTHORITY (USER_ID, AUTHORITY_ID) VALUES (3, 1);
 
 
 
-INSERT INTO REPORTS (ID, TESTER, TESTEE, TIME, REPORT) VALUES (nextval('report_seq'), 'admin', '李刚', now(), '{"bingli: {"name": "李刚", "age": 30}}' );
+INSERT INTO REPORTS (ID, TESTER, TESTEE, TIME, REPORT) VALUES (nextval('report_seq'), 'admin', '李刚', now(), '{"bingli": {"name": "李刚", "age": 30}}' );
 -- INSERT INTO REPORTS (ID, TESTER, TESTEE, TIME, REPORT) VALUES (nextval('report_seq'), 'admin', '李刚', now(), '2000' );
