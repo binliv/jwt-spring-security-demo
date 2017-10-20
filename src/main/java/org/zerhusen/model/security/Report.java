@@ -65,6 +65,10 @@ public class Report {
         return time;
     }
 
+    public long getMiliTime(){
+        return time.getTime();
+    }
+
     public void setTime(Date time) {
         this.time = time;
     }
