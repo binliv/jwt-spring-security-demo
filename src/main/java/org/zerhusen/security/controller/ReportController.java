@@ -1,16 +1,15 @@
 package org.zerhusen.security.controller;
 
+import com.yuyan.web.dto.ResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import org.zerhusen.model.security.Report;
 import org.zerhusen.security.repository.ReportRepository;
 
-import java.util.List;
+import java.util.Date;
 
 @RestController
 @CrossOrigin
@@ -21,7 +20,18 @@ public class ReportController {
     ReportRepository reportRepository;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public Page<Report> getReportList(String search, Pageable pageable){
-        return reportRepository.findAll(pageable);
+    public Page<Report> getReportList(String testee, Pageable pageable){
+        if(StringUtils.isEmpty(testee)){
+            return reportRepository.findAll(pageable);
+        } else {
+            return reportRepository.findByTesteeContaining(testee, pageable);
+        }
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResultDTO save(@RequestBody Report report){
+        report.setTime(new Date());
+        reportRepository.save(report);
+        return new ResultDTO("ok", 0);
     }
 }
