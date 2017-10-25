@@ -20,6 +20,7 @@ import org.zerhusen.model.security.User;
 import org.zerhusen.security.JwtTokenUtil;
 import org.zerhusen.security.JwtUser;
 import org.zerhusen.security.repository.UserRepository;
+import org.zerhusen.security.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ public class UserRestController {
     private UserDetailsService userDetailsService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -49,26 +53,10 @@ public class UserRestController {
 
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public UserDTO getAuthenticatedUser(HttpServletRequest request) {
-        UserDTO userDTO = new UserDTO();
-        String token = request.getHeader(tokenHeader).substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(token);
-        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
-        List<String> auths = user.getAuthorities().stream()
-                .map(ga -> {
-                    if (ga.getAuthority().indexOf("ADMIN") != -1) {
-                        return "admin";
-                    } else{
-                        return "user";
-                    }
-                })
-                .collect(Collectors.toList());
-        userDTO.setId(user.getId());
-        userDTO.setName(user.getUsername());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setEnabled(user.isEnabled()?"1":"0");
-        userDTO.setRole(auths);
-        return userDTO;
+        return userService.loadUserByToken(request);
     }
+
+
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public UserListDTO getUsers(String name, Pageable pageable) {
