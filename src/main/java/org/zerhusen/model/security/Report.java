@@ -31,7 +31,11 @@ public class Report {
 
     @Lob
     @Type(type = "org.hibernate.type.TextType")
-    private String report;
+    private String cases;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    private String info;
 
     public Long getId() {
         return id;
@@ -57,10 +61,6 @@ public class Report {
         this.testee = testee;
     }
 
-    public String getReport() {
-        return report;
-    }
-
     public Date getTime() {
         return time;
     }
@@ -73,9 +73,19 @@ public class Report {
         this.time = time;
     }
 
-    public void setReport(String report) {
-        this.report = report;
+    public String getCases() {
+        return cases;
     }
 
+    public void setCases(String cases) {
+        this.cases = cases;
+    }
 
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
 }
