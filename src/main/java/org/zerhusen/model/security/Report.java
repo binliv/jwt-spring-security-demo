@@ -73,13 +73,7 @@ public class Report {
         this.time = time;
     }
 
-    public String getCases() {
-        return cases;
-    }
-
-    public void setCases(String cases) {
-        this.cases = cases;
-    }
+    public String getCases() { return cases; } public void setCases(String cases) { this.cases = cases; }
 
     public String getInfo() {
         return info;
