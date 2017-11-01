@@ -14,7 +14,7 @@ spring:
     platform: POSTGRESQL
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
 jwt:
   header: Authorization
