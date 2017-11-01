@@ -5,6 +5,9 @@ import com.yuyan.web.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.zerhusen.model.security.Report;
@@ -13,7 +16,6 @@ import org.zerhusen.security.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -25,6 +27,9 @@ public class ReportController {
 
     @Autowired
     ReportRepository reportRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @RequestMapping(value = "reports", method = RequestMethod.GET)
     public Page<Report> getReportList(HttpServletRequest request, String testee, Pageable pageable){
@@ -60,8 +65,16 @@ public class ReportController {
     }
 
     @RequestMapping(value = "pad/reports", method = RequestMethod.POST)
-    public ResultDTO padSave(@RequestBody Report report){
-        report.setTime(new Date());
+    public ResultDTO padSave(@RequestBody Report report, @RequestParam String name, @RequestParam String password){
+                UsernamePasswordAuthenticationToken namePassToken = new UsernamePasswordAuthenticationToken(
+                name, password
+        );
+        // Perform the security
+        final Authentication authentication = authenticationManager.authenticate(namePassToken
+        );
+        if(report.getTime() == null){
+            report.setTime(new Date());
+        }
         reportRepository.save(report);
         return new ResultDTO("ok", 0);
     }
