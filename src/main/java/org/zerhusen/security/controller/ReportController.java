@@ -16,6 +16,10 @@ import org.zerhusen.security.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @RestController
 @CrossOrigin
@@ -31,8 +35,19 @@ public class ReportController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private Map<String,  Function<String, BiFunction<String, Pageable, Page<Report>>>> searchCommands = new HashMap<>();
+
+    {
+        searchCommands.put("admin|null|null", (testee) -> (tester, pageable) -> reportRepository.findAll(pageable) );
+        searchCommands.put("admin|testee|null", (testee) -> (tester, pageable) -> reportRepository.findByTesteeContaining(testee, pageable) );
+        searchCommands.put("admin|null|tester", (testee) -> (tester, pageable) -> reportRepository.findByTesterContaining(tester, pageable) );
+        searchCommands.put("admin|testee|tester", (testee) -> (tester, pageable) -> reportRepository.findByTesteeContainingAndTesterContaining(testee, tester, pageable) );
+        searchCommands.put("nonAdmin|null|tester", (testee) -> (tester, pageable) -> reportRepository.findByTester(tester, pageable) );
+        searchCommands.put("nonAdmin|testee|tester", (testee) -> (tester, pageable) -> reportRepository.findByTesteeContainingAndTester(testee, tester, pageable) );
+    }
+
     @RequestMapping(value = "reports", method = RequestMethod.GET)
-    public Page<Report> getReportList(HttpServletRequest request, String testee, Pageable pageable){
+    public Page<Report> getReportList(HttpServletRequest request, String testee, String tester, Pageable pageable){
 
         UserDTO userDTO = userService.loadUserByToken(request);
         boolean isAdmin = userDTO.getRole().stream().reduce((a, b) -> {
@@ -42,19 +57,38 @@ public class ReportController {
                 return b;
             }
         }).map(role -> "admin".equals(role)).get();
-        if(StringUtils.isEmpty(testee)){
-            if(isAdmin){
-                return reportRepository.findAll(pageable);
-            }else{
-                return reportRepository.findByTester(userDTO.getName(),pageable);
-            }
-        } else {
-            if(isAdmin){
-                return reportRepository.findByTesteeContaining(testee, pageable);
-            }else{
-                return reportRepository.findByTesteeContainingAndTester(testee,userDTO.getName(),pageable);
-            }
+
+        if(!isAdmin){
+            tester = userDTO.getName();
         }
+
+        String command = (isAdmin?"admin":"nonAdmin") +"|"
+                + ((StringUtils.isEmpty(testee))?"null":"testee") + "|"
+                + ((StringUtils.isEmpty(tester))?"null":"tester");
+        return searchCommands.get(command).apply(testee).apply(tester, pageable);
+
+        // before refactor
+//        if(StringUtils.isEmpty(testee)){
+//            if(isAdmin){
+//                if(StringUtils.isEmpty(tester)) {
+//                    return reportRepository.findAll(pageable);
+//                }else{
+//                    return reportRepository.findByTesterContaining(tester, pageable);
+//                }
+//            }else{
+//                return reportRepository.findByTester(userDTO.getName(),pageable);
+//            }
+//        } else {
+//            if(isAdmin){
+//                if(StringUtils.isEmpty(tester)){
+//                    return reportRepository.findByTesteeContaining(testee, pageable);
+//                } else{
+//                    return reportRepository.findByTesteeContainingAndTesterContaining(testee,tester, pageable);
+//                }
+//            }else{
+//                return reportRepository.findByTesteeContainingAndTester(testee,userDTO.getName(),pageable);
+//            }
+//        }
     }
 
     @RequestMapping(value = "reports", method = RequestMethod.POST)
